@@ -32,7 +32,6 @@ async function createBanner(req: Request, res: Response): Promise<void> {
     });
     res.status(400).json({ message: "Banner added successfully!" });
   } catch (err) {
-    console.log(err);
     res.status(500).json({ message: "Internal server error" });
   }
 }
@@ -54,7 +53,7 @@ async function updateBanner(req: Request, res: Response): Promise<void> {
         where: { uuid: req.params.uuid },
       }
     );
-    res.status(400).json({ message: "Banner updated successfully!" });
+    res.status(200).json({ message: "Banner updated successfully!" });
   } catch (err) {
     res.status(500).json({ message: "Something went wrong!" });
   }
@@ -65,7 +64,7 @@ async function deleteBanner(req: Request, res: Response): Promise<void> {
     await Banner.destroy({
       where: { uuid: req.params.uuid },
     });
-    res.status(400).json({ message: "Banner deleted successfully!" });
+    res.status(200).json({ message: "Banner deleted successfully!" });
   } catch (err) {
     res.status(500).json({ message: "Something went wrong!" });
   }
