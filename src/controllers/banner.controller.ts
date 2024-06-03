@@ -1,15 +1,31 @@
 import BannerInterface from "../interfaces/banner.interface";
 import { Request, Response } from "express";
 import Banner from "../models/banner";
+import multer from "multer";
+import path from "path";
+
+//store Image
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const uploadDir = path.resolve(__dirname, "../uploads/bannerImages");
+    cb(null, uploadDir);
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}-${file.originalname}`);
+  },
+});
+
+const upload = multer({ storage });
 
 async function createBanner(req: Request, res: Response): Promise<void> {
   try {
-    const { title, image, description, url, status }: BannerInterface =
-      req.body;
+    const { title, description, url, status }: BannerInterface = req.body;
+
+    const imagePath = req.file?.path;
 
     await Banner.create({
       title,
-      image,
+      image: imagePath,
       description,
       url,
       status,
@@ -55,4 +71,4 @@ async function deleteBanner(req: Request, res: Response): Promise<void> {
   }
 }
 
-export { createBanner, updateBanner, deleteBanner };
+export { upload, createBanner, updateBanner, deleteBanner };
