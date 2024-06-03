@@ -1,17 +1,28 @@
 import { Request, Response } from "express";
 import ourTeamInterface from "../interfaces/ourTeam.interface";
 import OurTeam from "../models/ourteam";
+import multer from "multer";
+import path from "path";
+
+//store image
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const uploadDir = path.resolve(__dirname, "../uploads/teamImages");
+    cb(null, uploadDir);
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}-${file.originalname}`);
+  },
+});
+
+const upload = multer({ storage });
 
 async function createOurTeam(req: Request, res: Response): Promise<void> {
   try {
-    const {
-      name,
-      image,
-      email,
-      phone_number,
-      position,
-      status,
-    }: ourTeamInterface = req.body;
+    const { name, email, phone_number, position, status }: ourTeamInterface =
+      req.body;
+
+    const imagePath = req.file?.path;
 
     const existingMember = await OurTeam.findOne({
       where: { email },
@@ -19,11 +30,12 @@ async function createOurTeam(req: Request, res: Response): Promise<void> {
 
     if (!existingMember) {
       res.status(400).json({ message: "Team member already exists" });
+      return;
     }
 
     await OurTeam.create({
       name,
-      image,
+      image: imagePath,
       email,
       phone_number,
       position,
@@ -31,7 +43,7 @@ async function createOurTeam(req: Request, res: Response): Promise<void> {
     });
     res.status(201).json({ message: "Team member added successfully!" });
   } catch (err) {
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ message: "Internal server error", err });
   }
 }
 
@@ -76,4 +88,4 @@ async function deleteOurTeam(req: Request, res: Response): Promise<void> {
   }
 }
 
-export { createOurTeam, updateOurTeam, deleteOurTeam };
+export { upload, createOurTeam, updateOurTeam, deleteOurTeam };

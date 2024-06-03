@@ -3,7 +3,7 @@ import { UUID } from "crypto";
 interface ourTeamInterface {
   uuid: UUID;
   name: string;
-  image: string;
+  image?: string;
   phone_number: string;
   email: string;
   position: string;

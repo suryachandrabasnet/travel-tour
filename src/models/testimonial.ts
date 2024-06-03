@@ -19,7 +19,7 @@ Testimonial.init(
     },
     uuid: {
       type: DataTypes.UUID,
-      defaultValue: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
     },
     name: {
       type: DataTypes.STRING,
@@ -49,3 +49,5 @@ Testimonial.init(
     modelName: "Testimonial",
   }
 );
+
+export default Testimonial;
